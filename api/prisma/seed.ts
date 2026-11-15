@@ -1,4 +1,5 @@
 import { PrismaClient, Role } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -39,21 +40,24 @@ async function main() {
     for (const [title, author, isbn, publishedAt] of books) {
       await prisma.book.upsert({
         where: { isbn },
-        update: {},
-        create: { title, author, isbn, publishedAt, copies: 3, genreId: genre.id },
+        update: { totalCopies: 3, genreId: genre.id },
+        create: { title, author, isbn, publishedAt, totalCopies: 3, genreId: genre.id },
       });
     }
   }
 
+  const librarianPassword = await bcrypt.hash('librarian123', 10);
+  const patronPassword = await bcrypt.hash('patron123', 10);
+
   await prisma.user.upsert({
     where: { email: 'librarian@example.com' },
-    update: {},
-    create: { email: 'librarian@example.com', name: 'Lena Librarian', role: Role.LIBRARIAN },
+    update: { password: librarianPassword },
+    create: { email: 'librarian@example.com', name: 'Lena Librarian', password: librarianPassword, role: Role.LIBRARIAN },
   });
   await prisma.user.upsert({
     where: { email: 'patron@example.com' },
-    update: {},
-    create: { email: 'patron@example.com', name: 'Pat Patron', role: Role.PATRON },
+    update: { password: patronPassword },
+    create: { email: 'patron@example.com', name: 'Pat Patron', password: patronPassword, role: Role.PATRON },
   });
 }
 

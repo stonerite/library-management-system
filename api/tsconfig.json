@@ -14,9 +14,8 @@
     "incremental": true,
     "skipLibCheck": true,
     "strict": true,
+    "strictPropertyInitialization": false,
     "types": ["node"]
   },
   "include": ["src/**/*"]
 }
-
-

@@ -1,17 +1,44 @@
 # Library Management System
 
-NestJS API with Prisma and PostgreSQL for a library's book catalog.
+NestJS API with Prisma and PostgreSQL for a library's book catalog and authentication system.
 
 ## Setup
 
 ```bash
 cd api
-cp .env.example .env        # fill in your hosted PostgreSQL URL
-npx prisma migrate dev --name init
-npx prisma db seed          # 16 books across 4 genres
+cp .env.example .env        # fill in your hosted PostgreSQL URL and JWT_SECRET
+npm install
+npx prisma db push          # or npx prisma migrate dev
+npx prisma db seed          # seeds genres, books with totalCopies, and demo users with hashed passwords
+npm run build
+npm start                   # runs on http://localhost:3000
 ```
 
-`package.json` needs: `"prisma": { "seed": "tsx prisma/seed.ts" }`.
+`package.json` seed config: `"prisma": { "seed": "tsx prisma/seed.ts" }`.
+
+## API Endpoints
+
+### Authentication & Users
+- `POST /auth/register` - Register a new user with bcrypt password hashing (defaults to `PATRON` role).
+- `POST /auth/login` - Authenticate user, rate-limited with `@nestjs/throttler`, returns JWT `accessToken`.
+- `GET /users/profile` - Protected route returning authenticated user info via `@Req()`.
+
+### Genres (Full CRUD)
+- `POST /genres` - Create a new genre (validated with `CreateGenreDto`).
+- `GET /genres` - List all genres with book count.
+- `GET /genres/:id` - Get a genre by ID including its books.
+- `PATCH /genres/:id` - Update a genre name (validated with `UpdateGenreDto`).
+- `DELETE /genres/:id` - Remove a genre by ID.
+
+### Books (Guarded CRUD & Search)
+- `GET /books` - List books with query-based filtering (`genreId`), search (`search` against title/author), and pagination (`page`, `limit`).
+- `GET /books/:id` - Get a book by ID.
+- `POST /books` - Create a new book (`JwtAuthGuard` + `RolesGuard` restricting to `LIBRARIAN`, validated with `CreateBookDto`).
+- `PATCH /books/:id` - Update a book (`JwtAuthGuard` + `RolesGuard` restricting to `LIBRARIAN`, validated with `UpdateBookDto`).
+- `DELETE /books/:id` - Delete a book (`JwtAuthGuard` + `RolesGuard` restricting to `LIBRARIAN`).
+
+### Postman Collection
+A complete Postman collection is available at [docs/postman_collection.json](docs/postman_collection.json).
 
 ## Schema Decisions
 

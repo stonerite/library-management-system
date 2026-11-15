@@ -1,0 +1,323 @@
+{
+  "info": {
+    "_postman_id": "library-management-system-collection",
+    "name": "Library Management System API",
+    "description": "Collection of requests for the Library Management System API covering Auth, Users, Genres, and Books endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"New User\",\n  \"role\": \"PATRON\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login (Librarian)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.accessToken) {",
+                  "  pm.collectionVariables.set('token', res.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"librarian@example.com\",\n  \"password\": \"librarian123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login (Patron)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"patron@example.com\",\n  \"password\": \"patron123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Genres",
+      "item": [
+        {
+          "name": "Create Genre",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cyberpunk\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/genres",
+              "host": ["{{baseUrl}}"],
+              "path": ["genres"]
+            }
+          }
+        },
+        {
+          "name": "Get All Genres",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/genres",
+              "host": ["{{baseUrl}}"],
+              "path": ["genres"]
+            }
+          }
+        },
+        {
+          "name": "Get Genre by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/genres/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["genres", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Genre",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sci-Fi & Cyberpunk\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/genres/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["genres", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Genre",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/genres/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["genres", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Get Books (Filtered, Search & Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/books?genreId=1&search=Dune&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["books"],
+              "query": [
+                {
+                  "key": "genreId",
+                  "value": "1"
+                },
+                {
+                  "key": "search",
+                  "value": "Dune"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Book by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/books/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["books", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Book (Librarian only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Hyperion\",\n  \"author\": \"Dan Simmons\",\n  \"isbn\": \"9780553283686\",\n  \"totalCopies\": 4,\n  \"genreId\": 1,\n  \"publishedAt\": 1989\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["books"]
+            }
+          }
+        },
+        {
+          "name": "Update Book (Librarian only)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"totalCopies\": 8\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/books/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["books", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Book (Librarian only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/books/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["books", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

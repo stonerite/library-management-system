@@ -1,9 +1,10 @@
 # Library Management System
 
-NestJS API with Prisma and PostgreSQL for a library's book catalog and authentication system.
+Fullstack application for a library's book catalog and authentication system, featuring a NestJS/Prisma API backend and a React/Vite frontend.
 
 ## Setup
 
+### 1. Backend (API)
 ```bash
 cd api
 cp .env.example .env        # fill in your hosted PostgreSQL URL and JWT_SECRET
@@ -15,6 +16,15 @@ npm start                   # runs on http://localhost:3000
 ```
 
 `package.json` seed config: `"prisma": { "seed": "tsx prisma/seed.ts" }`.
+
+### 2. Frontend (Client)
+```bash
+cd client
+cp .env.example .env        # points VITE_API_URL to http://localhost:3000
+npm install
+npm run dev                 # runs development server on http://localhost:5173
+npm run build               # builds production assets to client/dist
+```
 
 ## API Endpoints
 
@@ -39,6 +49,15 @@ npm start                   # runs on http://localhost:3000
 
 ### Postman Collection
 A complete Postman collection is available at [docs/postman_collection.json](docs/postman_collection.json).
+
+## Frontend Components & Features
+
+- **Routing:** Configured with React Router in `client/src/main.jsx` and `client/src/App.jsx` for `/` and `/books/:id`.
+- **Search & Filtering:** Debounced input (`SearchBar.jsx`) and genre dropdown (`HomePage.jsx`) driving live catalog queries.
+- **Responsive Catalog:** `BookGrid.jsx` rendering `BookCard.jsx` with unique key props (`key={book.id}`).
+- **Graceful States:** Skeleton loading UI, user-friendly empty state, and error handling with a retry button.
+- **Sort Control:** Sort books by title or author dynamically.
+- Complete documentation of frontend code is in [docs/FRONTEND_REQUIREMENTS.md](docs/FRONTEND_REQUIREMENTS.md).
 
 ## Schema Decisions
 

@@ -15,7 +15,7 @@ export default function SearchBar({ onSearch, delay = 400 }) {
 
   return (
     <div className="search-bar">
-      <span className="search-icon">🔍</span>
+      <span className="search-icon" aria-hidden="true">&#128269;</span>
       <input
         type="text"
         className="search-input"
@@ -31,7 +31,7 @@ export default function SearchBar({ onSearch, delay = 400 }) {
           onClick={() => setSearchTerm('')}
           aria-label="Clear search query"
         >
-          ✕
+          &#10005;
         </button>
       )}
     </div>

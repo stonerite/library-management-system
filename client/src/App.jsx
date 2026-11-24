@@ -8,7 +8,7 @@ export default function App() {
       <header className="navbar">
         <div className="nav-container">
           <Link to="/" className="nav-brand">
-            <span className="brand-icon">📚</span>
+            <span className="brand-icon" aria-hidden="true">&#128218;</span>
             <span className="brand-title">Library Management System</span>
           </Link>
           <nav className="nav-links">
@@ -26,7 +26,7 @@ export default function App() {
 
       <footer className="footer">
         <div className="footer-content">
-          <p>© 2026 Library Management System. Built for book lovers.</p>
+          <p>&copy; 2026 Library Management System. Built for book lovers.</p>
         </div>
       </footer>
     </div>

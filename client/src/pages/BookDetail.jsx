@@ -64,7 +64,7 @@ export default function BookDetail() {
     return (
       <div className="book-detail-container">
         <div className="state-message error-state" role="alert">
-          <div className="state-icon">⚠️</div>
+          <div className="state-icon">&#9888;&#65039;</div>
           <h2>Book Not Found</h2>
           <p>{error || 'The requested book does not exist.'}</p>
           <Link to="/" className="back-link">&larr; Back to Catalog</Link>

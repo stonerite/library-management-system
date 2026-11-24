@@ -87,7 +87,7 @@ export default function BookGrid({ genreId, search, sortBy = 'none' }) {
   if (error) {
     return (
       <div className="state-message error-state" role="alert">
-        <div className="state-icon">⚠️</div>
+        <div className="state-icon">&#9888;&#65039;</div>
         <h3>Unable to load books</h3>
         <p>{error}</p>
         <button
@@ -117,7 +117,7 @@ export default function BookGrid({ genreId, search, sortBy = 'none' }) {
   if (sortedBooks.length === 0) {
     return (
       <div className="state-message empty-state">
-        <div className="state-icon">📚</div>
+        <div className="state-icon">&#128218;</div>
         <h3>No books found</h3>
         <p>No books match your current search or genre filter. Try adjusting your criteria.</p>
       </div>

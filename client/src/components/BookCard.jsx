@@ -1,7 +1,20 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { useReadingList } from '../context/ReadingListContext';
 
 export default function BookCard({ book }) {
+  const { isInReadingList, addBook, removeBook } = useReadingList();
+  const inList = isInReadingList(book.id);
   const copies = book.totalCopies ?? book.copies ?? 1;
+
+  const handleToggleReadingList = (e) => {
+    e.preventDefault();
+    if (inList) {
+      removeBook(book.id);
+    } else {
+      addBook(book);
+    }
+  };
 
   return (
     <div className="book-card" data-testid={`book-card-${book.id}`}>
@@ -9,6 +22,15 @@ export default function BookCard({ book }) {
         {book.genre?.name && (
           <span className="genre-tag">{book.genre.name}</span>
         )}
+        <button
+          type="button"
+          className={`reading-list-toggle-btn ${inList ? 'active' : ''}`}
+          onClick={handleToggleReadingList}
+          aria-label={inList ? 'Remove from reading list' : 'Add to reading list'}
+          title={inList ? 'Remove from reading list' : 'Add to reading list'}
+        >
+          {inList ? '✓ Saved' : '+ Save'}
+        </button>
       </div>
       <div className="book-card-body">
         <h3 className="book-title">

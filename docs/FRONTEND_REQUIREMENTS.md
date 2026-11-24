@@ -559,3 +559,88 @@ export default function BookGrid({ genreId, search, sortBy = 'none' }) {
   );
 }
 ```
+
+
+---
+
+## 7. State Management & Authentication Integration
+
+### `client/src/context/ReadingListContext.jsx`
+Provides a central state store using `useReducer` handling `ADD_BOOK`, `REMOVE_BOOK`, `CLEAR_LIST`, and `SET_LIST`, automatically restored from and persisted to `localStorage`:
+```jsx
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
+
+export const ReadingListContext = createContext(null);
+const STORAGE_KEY = 'readingList';
+
+export const readingListReducer = (state, action) => {
+  switch (action.type) {
+    case 'ADD_BOOK': {
+      const bookToAdd = action.payload;
+      if (!bookToAdd || !bookToAdd.id) return state;
+      const alreadyExists = state.some((item) => item.id === bookToAdd.id);
+      if (alreadyExists) return state;
+      return [...state, bookToAdd];
+    }
+    case 'REMOVE_BOOK': {
+      const targetId =
+        typeof action.payload === 'object' && action.payload !== null
+          ? action.payload.id
+          : action.payload;
+      return state.filter((item) => item.id !== targetId);
+    }
+    case 'CLEAR_LIST':
+      return [];
+    case 'SET_LIST':
+      return Array.isArray(action.payload) ? action.payload : [];
+    default:
+      return state;
+  }
+};
+```
+
+---
+
+### `client/src/components/ProtectedRoute.jsx`
+Checks for user JWT token in `localStorage`. If absent, redirects to `/login` preserving target location; otherwise renders children:
+```jsx
+import React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+
+export default function ProtectedRoute({ children }) {
+  const location = useLocation();
+  const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+
+  if (!token) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
+}
+```
+
+---
+
+### `client/src/components/Navbar.jsx`
+Displays current reading list count dynamically from `useReadingList()` alongside navigation links and user authentication status:
+```jsx
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useReadingList } from '../context/ReadingListContext';
+
+export default function Navbar() {
+  const { count } = useReadingList();
+  // Renders <span className="reading-list-badge">{count}</span>
+  // ...
+}
+```
+
+---
+
+### `client/src/pages/LoginPage.jsx` & `RegisterPage.jsx`
+Controlled forms posting to `/auth/login` and `/auth/register`, storing the returned JWT in `localStorage` and redirecting users. Includes guest reading list merging upon login (stretch goal).
+
+---
+
+### `client/src/pages/SpaceBookingPage.jsx`
+Controlled form allowing authenticated patrons to reserve study spaces, discussion rooms, and media stations with space selection dropdown and `date`, `startTime`, and `endTime` inputs.

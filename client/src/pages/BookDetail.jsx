@@ -1,11 +1,15 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useReadingList } from '../context/ReadingListContext';
 
 export default function BookDetail() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const { isInReadingList, addBook, removeBook } = useReadingList();
+  const inList = book ? isInReadingList(book.id) : false;
 
   useEffect(() => {
     let isCancelled = false;
@@ -75,6 +79,14 @@ export default function BookDetail() {
 
   const copies = book.totalCopies ?? book.copies ?? 1;
 
+  const handleToggleReadingList = () => {
+    if (inList) {
+      removeBook(book.id);
+    } else {
+      addBook(book);
+    }
+  };
+
   return (
     <div className="book-detail-container">
       <nav className="detail-navigation">
@@ -83,9 +95,18 @@ export default function BookDetail() {
 
       <article className="book-detail-card">
         <header className="book-detail-header">
-          {book.genre?.name && (
-            <span className="genre-tag large">{book.genre.name}</span>
-          )}
+          <div className="detail-header-top">
+            {book.genre?.name && (
+              <span className="genre-tag large">{book.genre.name}</span>
+            )}
+            <button
+              type="button"
+              className={`detail-reading-list-btn ${inList ? 'active' : ''}`}
+              onClick={handleToggleReadingList}
+            >
+              {inList ? '✓ In Reading List' : '+ Add to Reading List'}
+            </button>
+          </div>
           <h1 className="detail-title">{book.title}</h1>
           <p className="detail-author">Written by <strong>{book.author}</strong></p>
         </header>
